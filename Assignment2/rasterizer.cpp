@@ -47,6 +47,8 @@ static float cross2D(const Vector2f& v1, const Vector2f& v2)
 static bool insideTriangle(int x, int y, const Vector3f* _v)
 {   
     // ! Implement this function to check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
+    x = x + 0.5; // pixel center
+    y = y + 0.5; // pixel center
     Vector2f p(x,y);
     bool ccw1 = cross2D(_v[1].head<2>() - _v[0].head<2>(), p - _v[0].head<2>()) >= 0;
     bool ccw2 = cross2D(_v[2].head<2>() - _v[1].head<2>(), p - _v[1].head<2>()) >= 0;
