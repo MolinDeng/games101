@@ -39,3 +39,6 @@ std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infin
 <img src="misc/2.jpg" style="height: 500px; width:500px;"/>
 
 ### Bonus
+
+<img src="misc/2-bonus.jpg" style="height: 500px; width:500px;"/>
+<img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
