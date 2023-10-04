@@ -40,5 +40,12 @@ std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infin
 
 ### Bonus
 
+```C++
+void rasterize_triangle_ssaa(const Triangle &t);
+void rasterize_triangle_ssaa2(const Triangle &t);
+```
+
+* Method 2: for a pixel on edges (cnt < 4), each pass, we clear its depth buffer to ensure both colors will be painted
+
 <img src="misc/2-bonus.jpg" style="height: 500px; width:500px;"/>
 <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
