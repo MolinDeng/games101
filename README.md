@@ -50,3 +50,11 @@ void rasterize_triangle_ssaa2(const Triangle &t);
 
 <img src="misc/2-bonus.jpg" style="height: 500px; width:500px;"/>
 <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
+
+## Assignment 3
+
+* Change the initialization of depth buffer in `clear` function
+
+```C++
+std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
+```
