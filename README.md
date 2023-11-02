@@ -59,8 +59,8 @@ void rasterize_triangle_ssaa2(const Triangle &t);
 std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
 ```
 
-<img src="misc/3/output1.png" style="height: 200px; width:200px;"/>
-<img src="misc/3/output2.png" style="height: 200px; width:200px;"/>
-<img src="misc/3/output3.png" style="height: 200px; width:200px;"/>
-<img src="misc/3/output4.png" style="height: 200px; width:200px;"/>
-<img src="misc/3/output5.png" style="height: 200px; width:200px;"/>
+<img display="inline" src="misc/3/output1.png" style="height: 200px; width:200px;"/>
+<img display="inline" src="misc/3/output2.png" style="height: 200px; width:200px;"/>
+<img display="inline" src="misc/3/output3.png" style="height: 200px; width:200px;"/>
+<img display="inline" src="misc/3/output4.png" style="height: 200px; width:200px;"/>
+<img display="inline" src="misc/3/output5.png" style="height: 200px; width:200px;"/>
