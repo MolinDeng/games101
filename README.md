@@ -64,6 +64,34 @@ void rasterize_triangle_ssaa2(const Triangle &t);
 std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
 ```
 
+* `getColorBilinear`
+
+```C++
+    Eigen::Vector3f getColorBilinear(float u, float v) {
+        auto u_img = u * width;
+        auto v_img = (1 - v) * height;
+        auto u_left = (int)u_img;
+        auto u_right = std::min(u_left + 1, width);
+        auto v_top = (int)v_img;
+        auto v_bottom = std::min(v_top + 1, height);
+        auto u_ratio = u_img - u_left;
+        auto v_ratio = v_img - v_bottom;
+        auto color_top_left = image_data.at<cv::Vec3b>(v_top, u_left);
+        auto color_top_right = image_data.at<cv::Vec3b>(v_top, u_right);
+        auto color_bottom_left = image_data.at<cv::Vec3b>(v_bottom, u_left);
+        auto color_bottom_right = image_data.at<cv::Vec3b>(v_bottom, u_right);
+
+        auto color_top = color_top_left + (color_top_right - color_top_left) * u_ratio;
+        auto color_bottom = color_bottom_left + (color_bottom_right - color_bottom_left) * u_ratio;
+        auto color = color_bottom + (color_top - color_bottom) * v_ratio;
+
+        return Eigen::Vector3f(color[0], color[1], color[2]);
+    }
+```
+
 <p align="center">
     <img src="misc/3/output1.png" style="height: 150px; width:150px;"/> <img src="misc/3/output2.png" style="height: 150px; width:150px;"/> <img src="misc/3/output3.png" style="height: 150px; width:150px;"/> <img src="misc/3/output4.png" style="height: 150px; width:150px;"/> <img src="misc/3/output5.png" style="height: 150px; width:150px;"/>
+</p>
+<p align="center">
+<img src="misc/3/bilinear.png" style="height: auto; width:auto;"/>
 </p>
