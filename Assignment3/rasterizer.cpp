@@ -233,7 +233,8 @@ void rst::rasterizer::rasterize_triangle(const Triangle &t, const std::array<Eig
         for (int y = ymin; y <= ymax; ++y) {
             if (insideTriangle(x, y, t.v)) {
                 auto [alpha, beta, gamma] = computeBarycentric2D(x, y, t.v);
-
+                // after mvp transformation, in draw function, we have already divided w, so here we don't need to divide w again
+                // all we need to do is to perform perspective correction
                 float z0 = 1.0 / (alpha / v[0].z() + beta / v[1].z() + gamma / v[2].z());
                 // z interpolation
                 float z_inerpolated = z0;
