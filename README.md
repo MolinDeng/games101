@@ -4,7 +4,9 @@ Personal study repo for UCSB Games 101
 
 ## Assignment 1
 
-<img src="misc/1.jpg" style="height: 500px; width:500px;"/>
+<p align="center">
+    <img src="misc/1.jpg" style="height: 500px; width:500px;"/>
+</p>
 
 ### Bonus
 
@@ -36,7 +38,9 @@ Eigen::Matrix4f get_rotation(Vector3f axis, float angle) {
 std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
 ```
 
-<img src="misc/2.jpg" style="height: 500px; width:500px;"/>
+<p align="center">
+    <img src="misc/2.jpg" style="height: 500px; width:500px;"/>
+</p>
 
 ### Bonus
 
@@ -48,7 +52,9 @@ void rasterize_triangle_ssaa2(const Triangle &t);
 * Method 2: for a pixel on edges (cnt < 4), each pass, we clear its depth buffer to ensure both colors will be painted
 * Reference: <https://zhuanlan.zhihu.com/p/454001952>
 
-<img src="misc/2-bonus.jpg" style="height: 500px; width:500px;"/> <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
+<p align="center">
+    <img src="misc/2-bonus.jpg" style="height: 500px; width:500px;"/> <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
+</p>
 
 ## Assignment 3
 
@@ -58,4 +64,6 @@ void rasterize_triangle_ssaa2(const Triangle &t);
 std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
 ```
 
-<img src="misc/3/output1.png" style="height: 150px; width:150px;"/> <img src="misc/3/output2.png" style="height: 150px; width:150px;"/> <img src="misc/3/output3.png" style="height: 150px; width:150px;"/> <img src="misc/3/output4.png" style="height: 150px; width:150px;"/> <img src="misc/3/output5.png" style="height: 150px; width:150px;"/>
+<p align="center">
+    <img src="misc/3/output1.png" style="height: 150px; width:150px;"/> <img src="misc/3/output2.png" style="height: 150px; width:150px;"/> <img src="misc/3/output3.png" style="height: 150px; width:150px;"/> <img src="misc/3/output4.png" style="height: 150px; width:150px;"/> <img src="misc/3/output5.png" style="height: 150px; width:150px;"/>
+</p>
