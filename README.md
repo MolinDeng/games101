@@ -98,6 +98,8 @@ std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infin
 
 ## Assignment 4
 
+* De Casteljau
+
 ```C++
 cv::Point2f recursive_bezier(std::vector<cv::Point2f> &control_points, int n, float t) {
     // Implement de Casteljau's algorithm
@@ -131,6 +133,29 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window) {
 }
 ```
 
+* Anti-aliasing
+
+```C++
+        int x0 = point.x;
+        int y0 = point.y;
+        int x1 = x0 + 1; // should check if x1 is out of bound
+        int y1 = y0 + 1; // should check if y1 is out of bound
+        float dx = point.x - x0;
+        int left = (1 - dx) * 255;
+        int right = 255 - left;
+        float dy = point.y - y0;
+
+        int color00 = std::min(255.f, window.at<cv::Vec3b>(y0, x0)[1] + left * (1 - dy));
+        int color01 = std::min(255.f, window.at<cv::Vec3b>(y1, x0)[1] + left * dy);
+        int color10 = std::min(255.f, window.at<cv::Vec3b>(y0, x1)[1] + right * (1 - dy));
+        int color11 = std::min(255.f, window.at<cv::Vec3b>(y1, x1)[1] + right * dy);
+        window.at<cv::Vec3b>(y0, x0)[1] = color00;
+        window.at<cv::Vec3b>(y1, x0)[1] = color01;
+        window.at<cv::Vec3b>(y0, x1)[1] = color10;
+        window.at<cv::Vec3b>(y1, x1)[1] = color11;
+```
+
 <p align="center">
-    <img src="misc/4.png" style="height: 300px; width:300px;"/>
+    <img src="misc/4.png" style="height: 500px; width:500px;"/>
+    <img src="misc/4-bonus.png" style="height: 500px; width:500px;"/>
 </p>

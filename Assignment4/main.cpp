@@ -52,7 +52,26 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window) {
 
         auto point = recursive_bezier(points, points.size(), t);
 
-        window.at<cv::Vec3b>(point.y, point.x)[1] = 255;
+        // anti-aliasing
+        int x0 = point.x;
+        int y0 = point.y;
+        int x1 = x0 + 1; // should check if x1 is out of bound
+        int y1 = y0 + 1; // should check if y1 is out of bound
+        float dx = point.x - x0;
+        int left = (1 - dx) * 255;
+        int right = 255 - left;
+        float dy = point.y - y0;
+
+        int color00 = std::min(255.f, window.at<cv::Vec3b>(y0, x0)[1] + left * (1 - dy));
+        int color01 = std::min(255.f, window.at<cv::Vec3b>(y1, x0)[1] + left * dy);
+        int color10 = std::min(255.f, window.at<cv::Vec3b>(y0, x1)[1] + right * (1 - dy));
+        int color11 = std::min(255.f, window.at<cv::Vec3b>(y1, x1)[1] + right * dy);
+        window.at<cv::Vec3b>(y0, x0)[1] = color00;
+        window.at<cv::Vec3b>(y1, x0)[1] = color01;
+        window.at<cv::Vec3b>(y0, x1)[1] = color10;
+        window.at<cv::Vec3b>(y1, x1)[1] = color11;
+
+        // window.at<cv::Vec3b>(y0, x0)[1] = 255;
     }
 }
 
@@ -66,12 +85,18 @@ int main() {
     int key = -1;
     while (key != 27) {
         for (auto &point : control_points) {
-            cv::circle(window, point, 3, {255, 255, 255}, 3);
+            cv::circle(window, point, 3, {0, 0, 255}, 3);
+        }
+        std::vector<cv::Point2f> points_for_recur = control_points;
+        for (auto &point : points_for_recur) {
+            point.x += 20;
+            point.y -= 20;
+            cv::circle(window, point, 3, {0, 255, 0}, 3);
         }
 
         if (control_points.size() == 4) {
             naive_bezier(control_points, window);
-            bezier(control_points, window);
+            bezier(points_for_recur, window);
 
             cv::imshow("Bezier Curve", window);
             cv::imwrite("my_bezier_curve.png", window);
