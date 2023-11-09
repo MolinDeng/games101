@@ -5,7 +5,7 @@ Personal study repo for UCSB Games 101
 ## Assignment 1
 
 <p align="center">
-    <img src="misc/1.jpg" style="height: 500px; width:500px;"/>
+    <img src="misc/1.jpg" style="height: 400px; width:400px;"/>
 </p>
 
 ### Bonus
@@ -39,7 +39,7 @@ std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infin
 ```
 
 <p align="center">
-    <img src="misc/2.jpg" style="height: 500px; width:500px;"/>
+    <img src="misc/2.jpg" style="height: 400px; width:400px;"/>
 </p>
 
 ### Bonus
@@ -53,7 +53,7 @@ void rasterize_triangle_ssaa2(const Triangle &t);
 * Reference: <https://zhuanlan.zhihu.com/p/454001952>
 
 <p align="center">
-    <img src="misc/2-bonus.jpg" style="height: 500px; width:500px;"/> <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
+    <img src="misc/2-bonus.jpg" style="height: 400px; width:400px;"/> <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
 </p>
 
 ## Assignment 3
