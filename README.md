@@ -95,3 +95,42 @@ std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infin
 <p align="center">
 <img src="misc/3/bilinear.png" style="height: auto; width:auto;"/>
 </p>
+
+## Assignment 4
+
+```C++
+cv::Point2f recursive_bezier(std::vector<cv::Point2f> &control_points, int n, float t) {
+    // Implement de Casteljau's algorithm
+    if (n == 1)
+        return control_points[0];
+
+    for (int i = 0; i < n - 1; ++i) {
+        auto point = (1 - t) * control_points[i] + t * control_points[i + 1];
+        control_points[i].x = point.x;
+        control_points[i].y = point.y;
+    }
+
+    return recursive_bezier(control_points, n - 1, t);
+}
+
+void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window) {
+    // make a copy of control points
+    std::vector<cv::Point2f> points = control_points;
+
+    for (double t = 0.0; t <= 1.0; t += 0.001) {
+        // reset points
+        for (int i = 0; i < points.size(); i++) {
+            points[i].x = control_points[i].x;
+            points[i].y = control_points[i].y;
+        }
+
+        auto point = recursive_bezier(points, points.size(), t);
+
+        window.at<cv::Vec3b>(point.y, point.x)[1] = 255;
+    }
+}
+```
+
+<p align="center">
+    <img src="misc/4.png" style="height: 300px; width:300px;"/>
+</p>
