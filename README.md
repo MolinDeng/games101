@@ -156,6 +156,31 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window) {
 ```
 
 <p align="center">
-    <img src="misc/4.png" style="height: 500px; width:500px;"/>
-    <img src="misc/4-bonus.png" style="height: 500px; width:500px;"/>
+    <img src="misc/4.png" style="height: 280px;"/> <img src="misc/4-bonus.png" style="height: 280px;"/>
+</p>
+
+## Assignment 5
+
+* Convert Screen Space to World Space (suppose the camera is at (0, 0, 0) and the near plane is at -1) 
+
+$$[0, height] \rightarrow [-\tan\frac{FOV}{2}, \tan\frac{FOV}{2}]$$
+$$[0, width] \rightarrow [-\tan\frac{FOV}{2}, \tan\frac{FOV}{2}] \cdot \text{aspectRatio}$$
+
+* Möller Trumbore Algorithm
+
+```C++
+Vector3f e1 = v1 - v0;
+Vector3f e2 = v2 - v0;
+Vector3f s = orig - v0;
+Vector3f s1 = crossProduct(dir, e2);
+Vector3f s2 = crossProduct(s, e1);
+float div = 1.0f / dotProduct(s1, e1);
+tnear = dotProduct(s2, e2) * div;
+u = dotProduct(s1, s) * div;
+v = dotProduct(s2, dir) * div;
+// barycentric coordinates must be in the [0, 1] range, sum must be 1 <=> point is inside the triangle
+return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
+```
+<p align="center">
+    <img src="misc/5.png" style="height: 400px;"/>
 </p>
