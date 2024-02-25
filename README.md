@@ -181,6 +181,13 @@ v = dotProduct(s2, dir) * div;
 // barycentric coordinates must be in the [0, 1] range, sum must be 1 <=> point is inside the triangle
 return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
 ```
+
 <p align="center">
     <img src="misc/5.png" style="height: 400px;"/>
+</p>
+
+## Assignment 6
+
+<p align="center">
+    <img src="misc/6.png" style="height: 400px;"/>
 </p>
