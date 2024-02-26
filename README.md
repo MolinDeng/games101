@@ -191,3 +191,5 @@ return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
 <p align="center">
     <img src="misc/6.png" style="height: 400px;"/>
 </p>
+
+- SAH-based BVH construction reference: <https://pbr-book.org/4ed/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic>
