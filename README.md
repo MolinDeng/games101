@@ -220,5 +220,5 @@ SPP = 128 with runtime 221s \
 SPP = 512 (rightmost/downmost) with runtime 883s
 
 <p align="center">
-    <img src="misc/7_spp_32.png" style="height: 200px;"/> <img src="misc/7_spp_128.png" style="height: 200px;"/> <img src="misc/7_spp_512.png" style="height: 200px;"/>
+    <img src="misc/7_spp_32.png" style="height: 330px;"/> <img src="misc/7_spp_128.png" style="height: 330px;"/> <img src="misc/7_spp_512.png" style="height: 330px;"/>
 </p>
