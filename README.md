@@ -222,7 +222,7 @@ SPP = 128 with runtime 38s \
 SPP = 512 (rightmost/downmost) with runtime 156s
 
 <p align="center">
-    <img src="misc/7_spp_32.png" style="height: 280px;"/> <img src="misc/7_spp_128.png" style="height: 280px;"/> <img src="misc/7_spp_512.png" style="height: 280px;"/>
+    <img src="misc/7_spp_32.png" style="height: 400px;"/> <img src="misc/7_spp_128.png" style="height: 400px;"/> <img src="misc/7_spp_512.png" style="height: 400px;"/>
 </p>
 
 * Also note that `wo` is pointing inwards, so we should use
