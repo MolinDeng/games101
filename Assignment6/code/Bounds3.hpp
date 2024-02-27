@@ -114,8 +114,8 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
         tMin = tzMin;
     if (tzMax < tMax)
         tMax = tzMax;
-    if (tMin < 0 || tMax < 0 || tMin > tMax)
-        return false;
+    // if (tMin < 0 || tMax < 0 || tMin > tMax)
+        // return false;
     return true;
 }
 

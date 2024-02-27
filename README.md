@@ -193,3 +193,32 @@ return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
 </p>
 
 - SAH-based BVH construction reference: <https://pbr-book.org/4ed/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic>
+
+## Assignment 7
+
+Use OpenMP to parallelize Ray Generation
+
+```C++
+#include <omp.h>
+
+#pragma omp parallel for
+  for (int k = 0; k < spp; k++)
+      framebuffer[m++] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
+}
+```
+Add these lines to `CMakeLists.txt` to enable OpenMP on macOS
+```cmake
+# Set the compiler to clang++ from LLVM
+set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
+
+# Add the compile flag -fopenmp
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+```
+
+SPP = 32 (leftmost/upmost) with runtime 70s \
+SPP = 128 with runtime 221s \
+SPP = 512 (rightmost/downmost) with runtime 883s
+
+<p align="center">
+    <img src="misc/7_spp_32.png" style="height: 200px;"/> <img src="misc/7_spp_128.png" style="height: 200px;"/> <img src="misc/7_spp_512.png" style="height: 200px;"/>
+</p>
