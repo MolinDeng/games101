@@ -204,8 +204,7 @@ return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
 
 #pragma omp parallel for
   for (int k = 0; k < spp; k++)
-      framebuffer[m++] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
-}
+      framebuffer[m] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
 ```
 Add these lines to `CMakeLists.txt` to enable OpenMP on macOS
 ```cmake
@@ -219,7 +218,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -O3")
 There are totally 12 threads on my machine, and the runtime is as follows: \
 SPP = 32 (leftmost/upmost) with runtime 18s \
 SPP = 128 with runtime 38s \
-SPP = 512 (rightmost/downmost) with runtime 156s
+SPP = 512 with runtime 156s
+SPP = 2048 (rightmost/downmost) with runtime 156s
 
 <p align="center">
     <img src="misc/7_spp_32.png" style="height: 400px;"/> <img src="misc/7_spp_128.png" style="height: 400px;"/> <img src="misc/7_spp_512.png" style="height: 400px;"/>
