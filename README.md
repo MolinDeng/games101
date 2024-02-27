@@ -196,7 +196,8 @@ return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
 
 ## Assignment 7
 
-Use OpenMP to parallelize Ray Generation
+* Use OpenMP to parallelize Ray Generation
+* Use -O3 to optimize the code
 
 ```C++
 #include <omp.h>
@@ -212,12 +213,12 @@ Add these lines to `CMakeLists.txt` to enable OpenMP on macOS
 set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
 
 # Add the compile flag -fopenmp
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -O3")
 ```
 
-SPP = 32 (leftmost/upmost) with runtime 70s \
-SPP = 128 with runtime 221s \
-SPP = 512 (rightmost/downmost) with runtime 883s
+SPP = 32 (leftmost/upmost) with runtime 18s \
+SPP = 128 with runtime 38s \
+SPP = 512 (rightmost/downmost) with runtime 156s
 
 <p align="center">
     <img src="misc/7_spp_32.png" style="height: 330px;"/> <img src="misc/7_spp_128.png" style="height: 330px;"/> <img src="misc/7_spp_512.png" style="height: 330px;"/>
