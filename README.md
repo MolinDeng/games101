@@ -216,10 +216,26 @@ set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -O3")
 ```
 
+There are totally 12 threads on my machine, and the runtime is as follows:
 SPP = 32 (leftmost/upmost) with runtime 18s \
 SPP = 128 with runtime 38s \
 SPP = 512 (rightmost/downmost) with runtime 156s
 
 <p align="center">
-    <img src="misc/7_spp_32.png" style="height: 330px;"/> <img src="misc/7_spp_128.png" style="height: 330px;"/> <img src="misc/7_spp_512.png" style="height: 330px;"/>
+    <img src="misc/7_spp_32.png" style="height: 300px;"/> <img src="misc/7_spp_128.png" style="height: 300px;"/> <img src="misc/7_spp_512.png" style="height: 300px;"/>
 </p>
+
+* Also note that `wo` is pointing inwards, so we should use
+  ```c++
+  Vector3f wo = ray.direction;
+  Vector3f f_r = hit.m->eval(wo, ws, hit.normal);
+  float pdf_indir = hit.m->pdf(wo, wi, hit.normal);
+  Vector3f f_r = hit.m->eval(wo, wi, hit.normal);
+  ```
+* If we want the `wo` pointing outwards, we should use
+  ```c++
+  Vector3f wo = -ray.direction;
+  Vector3f f_r = hit.m->eval(ws, wo, hit.normal);
+  float pdf_indir = hit.m->pdf(wi, wo, hit.normal);
+  Vector3f f_r = hit.m->eval(wi, wo, hit.normal);
+  ```
