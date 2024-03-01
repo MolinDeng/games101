@@ -2,98 +2,89 @@
 
 Personal study repo for UCSB Games 101
 
-## Assignment 1
+## Assignment 7
+
+* Use OpenMP to parallelize Ray Generation
+* Use -O3 to optimize the code
+
+```C++
+#include <omp.h>
+
+#pragma omp parallel for
+  for (int k = 0; k < spp; k++)
+      framebuffer[m] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
+```
+
+Add these lines to `CMakeLists.txt` to enable OpenMP on macOS
+
+```cmake
+# Set the compiler to clang++ from LLVM
+set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
+
+# Add the compile flag -fopenmp
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -O3")
+```
+
+There are totally 12 threads on my machine, and the runtime is as follows: \
+SPP = 32 with runtime 18s (leftmost/upmost) \
+SPP = 128 with runtime 38s \
+SPP = 512 with runtime 156s (rightmost/downmost)
 
 <p align="center">
-    <img src="misc/1.jpg" style="height: 400px; width:400px;"/>
+    <img src="misc/7_spp_32.png" style="height: 400px;"/> <img src="misc/7_spp_128.png" style="height: 400px;"/> <img src="misc/7_spp_512.png" style="height: 400px;"/>
 </p>
 
-### Bonus
+* Also note that `wo` is pointing inwards, so we should use
 
-Rotation by angle $\alpha$ around axis $\vec{\text{n}} = (n_x, n_y, n_z)$
+  ```c++
+  Vector3f wo = ray.direction;
+  Vector3f f_r = hit.m->eval(wo, ws, hit.normal);
+  float pdf_indir = hit.m->pdf(wo, wi, hit.normal);
+  Vector3f f_r = hit.m->eval(wo, wi, hit.normal);
+  ```
 
-* By default, any $\text{n}$ will cross (0, 0, 0)
+* If we want the `wo` pointing outwards, we should use
 
-```C++
-Eigen::Matrix4f get_rotation(Vector3f axis, float angle) {
-    Eigen::Matrix3f I = Eigen::Matrix3f::Identity();
-    Eigen::Matrix3f NNT = axis * axis.transpose();
-    Eigen::Matrix3f A_star;
-    A_star << 0, -axis[2], axis[1],
-        axis[2], 0, -axis[0],
-        -axis[1], axis[0], 0;
-    Eigen::Matrix3f R = cos(angle / 180 * MY_PI) * I + (1 - cos(angle / 180 * MY_PI)) * NNT + sin(angle / 180 * MY_PI) * A_star;
+  ```c++
+  Vector3f wo = -ray.direction;
+  Vector3f f_r = hit.m->eval(ws, wo, hit.normal);
+  float pdf_indir = hit.m->pdf(wi, wo, hit.normal);
+  Vector3f f_r = hit.m->eval(wi, wo, hit.normal);
+  ```
 
-    Eigen::Matrix4f rotate = Eigen::Matrix4f::Identity();
-    rotate.block(0, 0, 3, 3) = R;
-    return rotate;
-}
-```
-
-## Assignment 2
-
-* We need to change the initialization of depth buffer in `clear` function
-
-```C++
-std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
-```
+## Assignment 6
 
 <p align="center">
-    <img src="misc/2.jpg" style="height: 400px; width:400px;"/>
+    <img src="misc/6.png" style="height: 400px;"/>
 </p>
 
-### Bonus
+* SAH-based BVH construction reference: <https://pbr-book.org/4ed/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic>
+
+## Assignment 5
+
+* Convert Screen Space to World Space (suppose the camera is at (0, 0, 0) and the near plane is at -1)
+
+$$[0, height] \rightarrow [-\tan\frac{FOV}{2}, \tan\frac{FOV}{2}]$$
+$$[0, width] \rightarrow [-\tan\frac{FOV}{2}, \tan\frac{FOV}{2}] \cdot \text{aspectRatio}$$
+
+* Möller Trumbore Algorithm
 
 ```C++
-void rasterize_triangle_ssaa(const Triangle &t);
-void rasterize_triangle_ssaa2(const Triangle &t);
-```
-
-* Method 2: for a pixel on edges (cnt < 4), each pass, we clear its depth buffer to ensure both colors will be painted
-* Reference: <https://zhuanlan.zhihu.com/p/454001952>
-
-<p align="center">
-    <img src="misc/2-bonus.jpg" style="height: 400px; width:400px;"/> <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
-</p>
-
-## Assignment 3
-
-* Change the initialization of depth buffer in `clear` function
-
-```C++
-std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
-```
-
-* `getColorBilinear`
-
-```C++
-    Eigen::Vector3f getColorBilinear(float u, float v) {
-        auto u_img = u * width;
-        auto v_img = (1 - v) * height;
-        auto u_left = (int)u_img;
-        auto u_right = std::min(u_left + 1, width);
-        auto v_top = (int)v_img;
-        auto v_bottom = std::min(v_top + 1, height);
-        auto u_ratio = u_img - u_left;
-        auto v_ratio = v_img - v_bottom;
-        auto color_top_left = image_data.at<cv::Vec3b>(v_top, u_left);
-        auto color_top_right = image_data.at<cv::Vec3b>(v_top, u_right);
-        auto color_bottom_left = image_data.at<cv::Vec3b>(v_bottom, u_left);
-        auto color_bottom_right = image_data.at<cv::Vec3b>(v_bottom, u_right);
-
-        auto color_top = color_top_left + (color_top_right - color_top_left) * u_ratio;
-        auto color_bottom = color_bottom_left + (color_bottom_right - color_bottom_left) * u_ratio;
-        auto color = color_bottom + (color_top - color_bottom) * v_ratio;
-
-        return Eigen::Vector3f(color[0], color[1], color[2]);
-    }
+Vector3f e1 = v1 - v0;
+Vector3f e2 = v2 - v0;
+Vector3f s = orig - v0;
+Vector3f s1 = crossProduct(dir, e2);
+Vector3f s2 = crossProduct(s, e1);
+float div = 1.0f / dotProduct(s1, e1);
+tnear = dotProduct(s2, e2) * div;
+u = dotProduct(s1, s) * div;
+v = dotProduct(s2, dir) * div;
+// barycentric coordinates must be in the [0, 1] range, sum must be 1 <=> point is inside the triangle
+return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
 ```
 
 <p align="center">
-    <img src="misc/3/output1.png" style="height: 150px; width:150px;"/> <img src="misc/3/output2.png" style="height: 150px; width:150px;"/> <img src="misc/3/output3.png" style="height: 150px; width:150px;"/> <img src="misc/3/output4.png" style="height: 150px; width:150px;"/> <img src="misc/3/output5.png" style="height: 150px; width:150px;"/>
-</p>
-<p align="center">
-<img src="misc/3/bilinear.png" style="height: auto; width:auto;"/>
+    <img src="misc/5.png" style="height: 400px;"/>
 </p>
 
 ## Assignment 4
@@ -159,82 +150,96 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window) {
     <img src="misc/4.png" style="height: 280px;"/> <img src="misc/4-bonus.png" style="height: 280px;"/>
 </p>
 
-## Assignment 5
+## Assignment 3
 
-* Convert Screen Space to World Space (suppose the camera is at (0, 0, 0) and the near plane is at -1) 
-
-$$[0, height] \rightarrow [-\tan\frac{FOV}{2}, \tan\frac{FOV}{2}]$$
-$$[0, width] \rightarrow [-\tan\frac{FOV}{2}, \tan\frac{FOV}{2}] \cdot \text{aspectRatio}$$
-
-* Möller Trumbore Algorithm
+* Change the initialization of depth buffer in `clear` function
 
 ```C++
-Vector3f e1 = v1 - v0;
-Vector3f e2 = v2 - v0;
-Vector3f s = orig - v0;
-Vector3f s1 = crossProduct(dir, e2);
-Vector3f s2 = crossProduct(s, e1);
-float div = 1.0f / dotProduct(s1, e1);
-tnear = dotProduct(s2, e2) * div;
-u = dotProduct(s1, s) * div;
-v = dotProduct(s2, dir) * div;
-// barycentric coordinates must be in the [0, 1] range, sum must be 1 <=> point is inside the triangle
-return tnear >= 0 && u >= 0 && v >= 0 && u + v <= 1;
+std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
 ```
 
-<p align="center">
-    <img src="misc/5.png" style="height: 400px;"/>
-</p>
-
-## Assignment 6
-
-<p align="center">
-    <img src="misc/6.png" style="height: 400px;"/>
-</p>
-
-- SAH-based BVH construction reference: <https://pbr-book.org/4ed/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies#TheSurfaceAreaHeuristic>
-
-## Assignment 7
-
-* Use OpenMP to parallelize Ray Generation
-* Use -O3 to optimize the code
+* `getColorBilinear`
 
 ```C++
-#include <omp.h>
+    Eigen::Vector3f getColorBilinear(float u, float v) {
+        auto u_img = u * width;
+        auto v_img = (1 - v) * height;
+        auto u_left = (int)u_img;
+        auto u_right = std::min(u_left + 1, width);
+        auto v_top = (int)v_img;
+        auto v_bottom = std::min(v_top + 1, height);
+        auto u_ratio = u_img - u_left;
+        auto v_ratio = v_img - v_bottom;
+        auto color_top_left = image_data.at<cv::Vec3b>(v_top, u_left);
+        auto color_top_right = image_data.at<cv::Vec3b>(v_top, u_right);
+        auto color_bottom_left = image_data.at<cv::Vec3b>(v_bottom, u_left);
+        auto color_bottom_right = image_data.at<cv::Vec3b>(v_bottom, u_right);
 
-#pragma omp parallel for
-  for (int k = 0; k < spp; k++)
-      framebuffer[m] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
+        auto color_top = color_top_left + (color_top_right - color_top_left) * u_ratio;
+        auto color_bottom = color_bottom_left + (color_bottom_right - color_bottom_left) * u_ratio;
+        auto color = color_bottom + (color_top - color_bottom) * v_ratio;
+
+        return Eigen::Vector3f(color[0], color[1], color[2]);
+    }
 ```
-Add these lines to `CMakeLists.txt` to enable OpenMP on macOS
-```cmake
-# Set the compiler to clang++ from LLVM
-set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
-
-# Add the compile flag -fopenmp
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -O3")
-```
-
-There are totally 12 threads on my machine, and the runtime is as follows: \
-SPP = 32 with runtime 18s (leftmost/upmost) \
-SPP = 128 with runtime 38s \
-SPP = 512 with runtime 156s (rightmost/downmost)
 
 <p align="center">
-    <img src="misc/7_spp_32.png" style="height: 400px;"/> <img src="misc/7_spp_128.png" style="height: 400px;"/> <img src="misc/7_spp_512.png" style="height: 400px;"/>
+    <img src="misc/3/output1.png" style="height: 150px; width:150px;"/> <img src="misc/3/output2.png" style="height: 150px; width:150px;"/> <img src="misc/3/output3.png" style="height: 150px; width:150px;"/> <img src="misc/3/output4.png" style="height: 150px; width:150px;"/> <img src="misc/3/output5.png" style="height: 150px; width:150px;"/>
+</p>
+<p align="center">
+<img src="misc/3/bilinear.png" style="height: auto; width:auto;"/>
 </p>
 
-* Also note that `wo` is pointing inwards, so we should use
-  ```c++
-  Vector3f wo = ray.direction;
-  Vector3f f_r = hit.m->eval(wo, ws, hit.normal);
-  float pdf_indir = hit.m->pdf(wo, wi, hit.normal);
-  Vector3f f_r = hit.m->eval(wo, wi, hit.normal);
-  ```
-* If we want the `wo` pointing outwards, we should use
-  ```c++
-  Vector3f wo = -ray.direction;
-  Vector3f f_r = hit.m->eval(ws, wo, hit.normal);
-  float pdf_indir = hit.m->pdf(wi, wo, hit.normal);
-  Vector3f f_r = hit.m->eval(wi, wo, hit.normal);
-  ```
+## Assignment 2
+
+* We need to change the initialization of depth buffer in `clear` function
+
+```C++
+std::fill(depth_buf.begin(), depth_buf.end(), -std::numeric_limits<float>::infinity());
+```
+
+<p align="center">
+    <img src="misc/2.jpg" style="height: 400px; width:400px;"/>
+</p>
+
+### Bonus
+
+```C++
+void rasterize_triangle_ssaa(const Triangle &t);
+void rasterize_triangle_ssaa2(const Triangle &t);
+```
+
+* Method 2: for a pixel on edges (cnt < 4), each pass, we clear its depth buffer to ensure both colors will be painted
+* Reference: <https://zhuanlan.zhihu.com/p/454001952>
+
+<p align="center">
+    <img src="misc/2-bonus.jpg" style="height: 400px; width:400px;"/> <img src="misc/2-compare.jpg" style="height: 300px; width:600px;"/>
+</p>
+
+## Assignment 1
+
+<p align="center">
+    <img src="misc/1.jpg" style="height: 400px; width:400px;"/>
+</p>
+
+### Bonus
+
+Rotation by angle $\alpha$ around axis $\vec{\text{n}} = (n_x, n_y, n_z)$
+
+* By default, any $\text{n}$ will cross (0, 0, 0)
+
+```C++
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle) {
+    Eigen::Matrix3f I = Eigen::Matrix3f::Identity();
+    Eigen::Matrix3f NNT = axis * axis.transpose();
+    Eigen::Matrix3f A_star;
+    A_star << 0, -axis[2], axis[1],
+        axis[2], 0, -axis[0],
+        -axis[1], axis[0], 0;
+    Eigen::Matrix3f R = cos(angle / 180 * MY_PI) * I + (1 - cos(angle / 180 * MY_PI)) * NNT + sin(angle / 180 * MY_PI) * A_star;
+
+    Eigen::Matrix4f rotate = Eigen::Matrix4f::Identity();
+    rotate.block(0, 0, 3, 3) = R;
+    return rotate;
+}
+```
